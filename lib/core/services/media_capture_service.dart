@@ -35,9 +35,30 @@ class MediaCaptureService {
   }
 
   Future<XFile?> capturePhoto() async {
+    // On web (especially iOS Safari / PWA) the camera input must be opened
+    // synchronously within the user gesture. Any `await` before [pickImage]
+    // severs the gesture chain and iOS silently refuses to open the camera,
+    // so we skip the async permission prompt and invoke the picker directly.
+    if (kIsWeb) {
+      return _pickImage();
+    }
+
     final granted = await requestPermissions(forVideo: false);
     if (!granted) return null;
+    return _pickImage();
+  }
 
+  Future<XFile?> captureVideo() async {
+    if (kIsWeb) {
+      return _pickVideo();
+    }
+
+    final granted = await requestPermissions(forVideo: true);
+    if (!granted) return null;
+    return _pickVideo();
+  }
+
+  Future<XFile?> _pickImage() {
     try {
       return _picker.pickImage(
         source: ImageSource.camera,
@@ -57,10 +78,7 @@ class MediaCaptureService {
     }
   }
 
-  Future<XFile?> captureVideo() async {
-    final granted = await requestPermissions(forVideo: true);
-    if (!granted) return null;
-
+  Future<XFile?> _pickVideo() {
     try {
       return _picker.pickVideo(
         source: ImageSource.camera,

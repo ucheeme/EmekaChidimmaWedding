@@ -23,6 +23,12 @@ class FirebaseMemoryDataSource {
   final FirebaseStorage _storage;
   final Uuid _uuid;
 
+  /// Caps the live gallery stream so each guest device only ever holds the most
+  /// recent memories in memory. This keeps the real-time listener fast and
+  /// bounds Firestore reads even when thousands of photos are uploaded by a
+  /// large crowd. Older memories remain stored and accessible to the admin.
+  static const int liveGalleryLimit = 300;
+
   CollectionReference<Map<String, dynamic>> get _memoriesCollection =>
       _firestore.collection(FirebaseCollections.memories);
 
@@ -32,6 +38,7 @@ class FirebaseMemoryDataSource {
         .where(MemoryFields.weddingId, isEqualTo: id)
         .where(MemoryFields.visible, isEqualTo: true)
         .orderBy(MemoryFields.timestamp, descending: true)
+        .limit(liveGalleryLimit)
         .snapshots()
         .map(
           (snapshot) => snapshot.docs

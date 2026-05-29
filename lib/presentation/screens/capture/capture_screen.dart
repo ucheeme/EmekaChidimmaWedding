@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -30,7 +31,11 @@ class _CaptureScreenState extends State<CaptureScreen> {
   void initState() {
     super.initState();
     final type = widget.initialMediaType;
-    if (type != null) {
+    // On web (notably iOS Safari/PWA) the camera can only be opened from a
+    // direct user tap, not a post-frame callback — so we present the idle view
+    // with the capture buttons instead of auto-launching. On native platforms
+    // we keep the smooth auto-launch behaviour.
+    if (type != null && !kIsWeb) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         final cubit = context.read<CaptureCubit>();
