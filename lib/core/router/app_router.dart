@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -174,10 +173,12 @@ Future<String?> _qrEntryRedirect(
     }
 
     final qrEntry = sl<QrEntryService>();
-    final fromQr = qrEntry.launchUriGrantsEntry(state.uri) ||
-        (kIsWeb && qrEntry.launchUriGrantsEntry(Uri.base));
-
-    if (fromQr) {
+    // Detect QR entry from the router's own target only. Using Uri.base here
+    // breaks under the hash URL strategy (Uri.base.path stays at the launch
+    // path, e.g. "/start", for the whole session), which would force every
+    // in-app navigation back to the splash screen — an infinite loop. The
+    // initial Uri.base grant is handled in bootstrap()/resolveInitialLocation.
+    if (qrEntry.launchUriGrantsEntry(state.uri)) {
       await qrEntry.grantEntryFromQr();
       if (location != RoutePaths.splash) {
         return RoutePaths.splash;

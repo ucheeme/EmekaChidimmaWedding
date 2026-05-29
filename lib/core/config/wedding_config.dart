@@ -4,7 +4,7 @@ class WeddingConfig {
   const WeddingConfig._();
 
   static const String groomName = 'Emeka';
-  static const String brideName = 'Joyce';
+  static const String brideName = 'Chidimma';
 
   /// Used in Firestore queries and Storage paths.
   static const String weddingId = 'emeka-wedding-2026';
