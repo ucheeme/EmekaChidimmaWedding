@@ -36,13 +36,17 @@ class FirebaseMemoryDataSource {
     final id = weddingId ?? WeddingConfig.weddingId;
     return _memoriesCollection
         .where(MemoryFields.weddingId, isEqualTo: id)
-        .where(MemoryFields.visible, isEqualTo: true)
         .orderBy(MemoryFields.timestamp, descending: true)
         .limit(liveGalleryLimit)
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
               .map(MemoryModel.fromFirestore)
+              // Filter hidden items in-app so legacy uploads without a
+              // `visible` field (treated as true by [fromFirestore]) still
+              // appear. A Firestore `visible == true` query excludes docs
+              // where the field was never written.
+              .where((m) => m.visible)
               .toList(growable: false),
         );
   }
@@ -90,8 +94,12 @@ class FirebaseMemoryDataSource {
     final snapshot = await _memoriesCollection
         .where(MemoryFields.weddingId, isEqualTo: id)
         .orderBy(MemoryFields.timestamp, descending: true)
+        .limit(liveGalleryLimit)
         .get();
-    return snapshot.docs.map(MemoryModel.fromFirestore).toList();
+    return snapshot.docs
+        .map(MemoryModel.fromFirestore)
+        .where((m) => m.visible)
+        .toList();
   }
 
   Future<MemoryModel> uploadMemory({
