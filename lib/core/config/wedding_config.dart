@@ -4,13 +4,14 @@ class WeddingConfig {
   const WeddingConfig._();
 
   static const String groomName = 'Emeka';
-  static const String brideName = 'Chidimma';
+  static const String brideName = 'Joyce';
 
   /// Used in Firestore queries and Storage paths.
-  static const String weddingId = 'emekachidimmawedding';
+  static const String weddingId = 'emeka-wedding-2026';
 
+  /// Bride first, e.g. "Joyce & Emeka".
   static String get coupleDisplayName => '$brideName & $groomName';
 
   static String get splashWelcome =>
-      'Welcome to $groomName & $brideName\'s Wedding';
+      'Welcome to $brideName & $groomName\'s Wedding';
 }
