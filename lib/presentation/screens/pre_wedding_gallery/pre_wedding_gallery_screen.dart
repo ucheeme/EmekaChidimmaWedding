@@ -8,6 +8,7 @@ import '../../../core/constants/route_paths.dart';
 import '../../../core/content/wedding_content.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../widgets/app_image.dart';
+import '../../widgets/nav_buttons.dart';
 import '../../widgets/premium_button.dart';
 import '../../widgets/romantic_background.dart';
 import '../../widgets/video_showcase.dart';
@@ -36,11 +37,9 @@ class _PreWeddingGalleryScreenState extends State<PreWeddingGalleryScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => context.pop(),
-        ),
+        leading: const AppBackButton(),
         title: const Text('Pre-Wedding Gallery'),
+        actions: const [HomeIconButton()],
       ),
       body: RomanticBackground(
         child: SafeArea(
@@ -152,7 +151,7 @@ class _PreWeddingGalleryScreenState extends State<PreWeddingGalleryScreen> {
                   child: PremiumButton(
                     label: 'Read Our Love Notes',
                     icon: Icons.favorite_border,
-                    onPressed: () => context.go(RoutePaths.loveNotes),
+                    onPressed: () => context.push(RoutePaths.loveNotes),
                   ),
                 ),
               ),

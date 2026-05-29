@@ -70,7 +70,7 @@ class IntroScreen extends StatelessWidget {
                 PremiumButton(
                   label: 'Begin Our Story',
                   icon: Icons.auto_stories_outlined,
-                  onPressed: () => context.go(RoutePaths.loveStory),
+                  onPressed: () => context.push(RoutePaths.loveStory),
                 ),
                 const SizedBox(height: 16),
                 PremiumButton(

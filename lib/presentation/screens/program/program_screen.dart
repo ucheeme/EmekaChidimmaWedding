@@ -6,6 +6,7 @@ import 'package:photo_view/photo_view.dart';
 import '../../../core/content/wedding_content.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../widgets/app_image.dart';
+import '../../widgets/nav_buttons.dart';
 import '../../widgets/romantic_background.dart';
 
 /// Displays the printed wedding programs (church order of service and reception
@@ -20,8 +21,10 @@ class ProgramScreen extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        leading: const AppBackButton(),
         title: const Text('Wedding Program'),
         backgroundColor: Colors.transparent,
+        actions: const [HomeIconButton()],
       ),
       body: RomanticBackground(
         child: SafeArea(

@@ -8,6 +8,7 @@ import '../../../core/constants/route_paths.dart';
 import '../../../core/content/wedding_content.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../widgets/glass_card.dart';
+import '../../widgets/nav_buttons.dart';
 import '../../widgets/premium_button.dart';
 import '../../widgets/romantic_background.dart';
 
@@ -35,11 +36,9 @@ class _LoveNotesScreenState extends State<LoveNotesScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => context.pop(),
-        ),
+        leading: const AppBackButton(),
         title: const Text('Love Notes'),
+        actions: const [HomeIconButton()],
       ),
       body: RomanticBackground(
         showPetals: true,

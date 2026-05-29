@@ -132,7 +132,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 Center(
                   child: TextButton.icon(
-                    onPressed: () => context.go(RoutePaths.loveStory),
+                    onPressed: () => context.push(RoutePaths.loveStory),
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.deepWine,
                     ),

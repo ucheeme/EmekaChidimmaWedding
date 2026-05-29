@@ -6,11 +6,11 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="description" content="Forever Moments — wedding memories for Emeka &amp; [Bride Name]. Scan the QR code at the wedding to join.">
+  <meta name="description" content="Forever Moments — wedding memories for Joyce &amp; Emeka. Scan the QR code at the wedding to join.">
 
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Forever Moments">
   <meta name="theme-color" content="#0E0E0E">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -19,8 +19,85 @@
 
   <title>Forever Moments</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background-color: #0E0E0E; }
+
+    #boot-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 35%, #2B1A10 0%, #0E0E0E 70%);
+      font-family: Georgia, 'Times New Roman', serif;
+      transition: opacity 0.6s ease;
+    }
+    #boot-loader.hidden { opacity: 0; pointer-events: none; }
+
+    .bl-ring {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      border: 2px solid rgba(196, 154, 45, 0.25);
+      border-top-color: #C49A2D;
+      animation: bl-spin 1.1s linear infinite;
+      position: relative;
+    }
+    .bl-heart {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #6E1A2B;
+      font-size: 30px;
+      line-height: 1;
+      animation: bl-beat 1.4s ease-in-out infinite;
+    }
+    .bl-title {
+      margin-top: 30px;
+      color: #C49A2D;
+      font-size: 26px;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+    }
+    .bl-sub {
+      margin-top: 8px;
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 13px;
+      letter-spacing: 2px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .bl-dots { color: rgba(255,255,255,0.45); font-size: 12px; margin-top: 18px; letter-spacing: 3px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+    @keyframes bl-spin { to { transform: rotate(360deg); } }
+    @keyframes bl-beat {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.18); }
+    }
+  </style>
 </head>
 <body>
+  <div id="boot-loader">
+    <div class="bl-ring"><span class="bl-heart">&#10084;</span></div>
+    <div class="bl-title">Forever Moments</div>
+    <div class="bl-sub">JOYCE &amp; EMEKA</div>
+    <div class="bl-dots">preparing your invitation…</div>
+  </div>
+
+  <script>
+    // Remove the boot loader once Flutter has painted its first frame.
+    window.addEventListener('flutter-first-frame', function () {
+      var loader = document.getElementById('boot-loader');
+      if (loader) {
+        loader.classList.add('hidden');
+        setTimeout(function () { loader.remove(); }, 650);
+      }
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

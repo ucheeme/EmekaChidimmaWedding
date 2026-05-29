@@ -7,6 +7,7 @@ import '../../../core/constants/route_paths.dart';
 import '../../../core/content/wedding_content.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../widgets/app_image.dart';
+import '../../widgets/nav_buttons.dart';
 import '../../widgets/premium_button.dart';
 import '../../widgets/romantic_background.dart';
 
@@ -34,11 +35,9 @@ class _LoveStoryScreenState extends State<LoveStoryScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => context.pop(),
-        ),
+        leading: const AppBackButton(),
         title: const Text('Our Love Story'),
+        actions: const [HomeIconButton()],
       ),
       body: RomanticBackground(
         child: SafeArea(
@@ -86,7 +85,7 @@ class _LoveStoryScreenState extends State<LoveStoryScreen> {
                         curve: Curves.easeInOutCubic,
                       );
                     } else {
-                      context.go(RoutePaths.preWeddingGallery);
+                      context.push(RoutePaths.preWeddingGallery);
                     }
                   },
                 ),
