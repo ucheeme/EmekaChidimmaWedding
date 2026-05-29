@@ -1,0 +1,50 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Guest-uploaded wedding memories (photos & videos metadata).
+    match /memories/{memoryId} {
+      allow read: if request.auth != null;
+
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasAll([
+          'imageUrl',
+          'timestamp',
+          'mediaType',
+          'weddingId',
+        ])
+        && request.resource.data.imageUrl is string
+        && request.resource.data.imageUrl.size() > 0
+        && request.resource.data.mediaType in ['photo', 'video']
+        && request.resource.data.weddingId is string
+        && request.resource.data.timestamp == request.time
+        && (!('guestName' in request.resource.data)
+            || request.resource.data.guestName is string)
+        && (!('message' in request.resource.data)
+            || request.resource.data.message is string)
+        && (!('tableNumber' in request.resource.data)
+            || request.resource.data.tableNumber is string);
+
+      // Guest uploads are immutable after creation.
+      allow update, delete: if false;
+    }
+
+    // Curated content: love story, gallery, messages (admin-managed).
+    match /wedding_content/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Optional guest text messages (separate from media).
+    match /guest_messages/{messageId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasAll(['text', 'timestamp', 'weddingId'])
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 500
+        && request.resource.data.timestamp == request.time;
+      allow update, delete: if false;
+    }
+  }
+}
