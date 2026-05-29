@@ -20,6 +20,7 @@ import '../../presentation/screens/live_gallery/live_gallery_screen.dart';
 import '../../presentation/screens/love_notes/love_notes_screen.dart';
 import '../../presentation/screens/love_story/love_story_screen.dart';
 import '../../presentation/screens/pre_wedding_gallery/pre_wedding_gallery_screen.dart';
+import '../../presentation/screens/program/program_screen.dart';
 import '../../presentation/screens/qr_gate/qr_gate_screen.dart';
 import '../../presentation/screens/splash/splash_screen.dart';
 import '../../presentation/screens/wedding_wall/wedding_wall_screen.dart';
@@ -78,6 +79,13 @@ GoRouter createAppRouter({required FirebaseBootstrapResult firebase}) {
         path: RoutePaths.loveNotes,
         pageBuilder: (context, state) => fadeSlidePage(
           child: const LoveNotesScreen(),
+          state: state,
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.program,
+        pageBuilder: (context, state) => fadeSlidePage(
+          child: const ProgramScreen(),
           state: state,
         ),
       ),

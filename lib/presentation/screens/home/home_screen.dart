@@ -82,6 +82,11 @@ class HomeScreen extends StatelessWidget {
                     .slideY(begin: 0.1, curve: Curves.easeOutCubic),
                 const SizedBox(height: 18),
                 const AddToHomeScreenBanner(),
+                const _ProgramBanner()
+                    .animate()
+                    .fadeIn(delay: 250.ms, duration: 500.ms)
+                    .slideY(begin: 0.1, curve: Curves.easeOutCubic),
+                const SizedBox(height: 16),
                 Expanded(
                   child: GridView.count(
                     crossAxisCount: 2,
@@ -200,6 +205,70 @@ class _HomeHeroStrip extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ProgramBanner extends StatelessWidget {
+  const _ProgramBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassCard(
+      onTap: () => context.push(RoutePaths.program),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.wine,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.wine.withValues(alpha: 0.35),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.event_note_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Order of Program',
+                  style: GoogleFonts.lato(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.deepWine,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Church order of service & reception schedule',
+                  style: GoogleFonts.lato(
+                    fontSize: 11.5,
+                    color: AppColors.deepWine.withValues(alpha: 0.6),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.arrow_forward_ios_rounded,
+            size: 14,
+            color: AppColors.deepWine.withValues(alpha: 0.4),
+          ),
+        ],
       ),
     );
   }

@@ -10,6 +10,7 @@ class RoutePaths {
   static const String loveStory = '/love-story';
   static const String preWeddingGallery = '/pre-wedding-gallery';
   static const String loveNotes = '/love-notes';
+  static const String program = '/program';
   static const String home = '/home';
   static const String capture = '/capture';
 

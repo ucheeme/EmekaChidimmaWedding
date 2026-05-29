@@ -51,6 +51,20 @@ class LoveNote {
   final String? author;
 }
 
+/// A printed program page (order of service / order of program) shown as a
+/// zoomable image so guests can follow the day's flow.
+class ProgramPage {
+  const ProgramPage({
+    required this.image,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final String image;
+  final String title;
+  final String subtitle;
+}
+
 abstract final class WeddingContent {
   static const loveStoryChapters = [
     LoveStoryChapter(
@@ -180,7 +194,30 @@ abstract final class WeddingContent {
     ),
   ];
 
+  static const programPages = [
+    ProgramPage(
+      image: AppAssets.programService,
+      title: 'Church Ceremony',
+      subtitle: 'Order of service · ministers · hymns · photography',
+    ),
+    ProgramPage(
+      image: AppAssets.programReception,
+      title: 'Reception',
+      subtitle: 'Order of program · 12:00 noon',
+    ),
+  ];
+
   static const weddingVideos = [
+    WeddingVideo(
+      asset: AppAssets.loveStory1,
+      title: 'Our Love Story',
+      subtitle: 'A short film',
+    ),
+    WeddingVideo(
+      asset: AppAssets.loveStory2,
+      title: 'Joyce & Emeka',
+      subtitle: 'Moments together',
+    ),
     WeddingVideo(
       asset: AppAssets.clip1,
       title: 'Our Moments',

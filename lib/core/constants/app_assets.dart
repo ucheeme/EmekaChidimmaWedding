@@ -42,4 +42,12 @@ abstract final class AppAssets {
   static const String clip1 = '$_img/clip_01.mp4';
   static const String clip2 = '$_img/clip_02.mp4';
   static const String clip3 = '$_img/clip_03.mp4';
+
+  // Love story short films.
+  static const String loveStory1 = '$_img/love_story_01.mp4';
+  static const String loveStory2 = '$_img/love_story_02.mp4';
+
+  // Wedding program (printed order of service / order of program).
+  static const String programService = '$_img/program_service.png';
+  static const String programReception = '$_img/program_reception.png';
 }
