@@ -13,6 +13,22 @@ class FirebaseCollections {
   static const String admins = 'admins';
 }
 
+/// Document ids inside [FirebaseCollections.weddingContent], one per editable
+/// section. Each document holds an `items` array managed by the admin app.
+class ContentSections {
+  const ContentSections._();
+
+  static const String loveStory = 'love_story';
+  static const String gallery = 'gallery';
+  static const String videos = 'videos';
+  static const String loveNotes = 'love_notes';
+  static const String program = 'program';
+
+  /// Array field holding the ordered items within a section document.
+  static const String itemsField = 'items';
+  static const String updatedAtField = 'updatedAt';
+}
+
 /// Cloud Storage path helpers.
 class FirebaseStoragePaths {
   const FirebaseStoragePaths._();
@@ -23,6 +39,16 @@ class FirebaseStoragePaths {
     required String extension,
   }) =>
       'weddings/$weddingId/memories/$memoryId.$extension';
+
+  /// Admin-uploaded curated content media (love-story photos, gallery, videos,
+  /// program pages).
+  static String contentMedia({
+    String weddingId = WeddingConfig.weddingId,
+    required String section,
+    required String id,
+    required String extension,
+  }) =>
+      'weddings/$weddingId/content/$section/$id.$extension';
 }
 
 /// Firestore field keys for [FirebaseCollections.memories].

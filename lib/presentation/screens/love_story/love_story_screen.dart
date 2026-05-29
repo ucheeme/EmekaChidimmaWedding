@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/constants/route_paths.dart';
 import '../../../core/content/wedding_content.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../cubit/content/content_cubit.dart';
 import '../../widgets/app_image.dart';
 import '../../widgets/nav_buttons.dart';
 import '../../widgets/premium_button.dart';
@@ -30,7 +32,7 @@ class _LoveStoryScreenState extends State<LoveStoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final chapters = WeddingContent.loveStoryChapters;
+    final chapters = context.watch<ContentCubit>().state.bundle.loveStory;
 
     return Scaffold(
       extendBodyBehindAppBar: true,

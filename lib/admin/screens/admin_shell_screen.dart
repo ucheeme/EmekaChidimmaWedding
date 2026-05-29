@@ -7,6 +7,7 @@ import '../../data/datasources/firebase/firebase_memory_datasource.dart';
 import '../cubit/admin_auth_cubit.dart';
 import '../cubit/messages_cubit.dart';
 import '../cubit/moderation_cubit.dart';
+import 'content_sections_screen.dart';
 import 'messages_view.dart';
 import 'moderation_view.dart';
 
@@ -19,6 +20,8 @@ class AdminShellScreen extends StatefulWidget {
 
 class _AdminShellScreenState extends State<AdminShellScreen> {
   int _index = 0;
+
+  static const _titles = ['Guest Gallery', 'Guest Messages', 'Edit Content'];
 
   Future<void> _confirmSignOut() async {
     final confirmed = await showDialog<bool>(
@@ -60,7 +63,7 @@ class _AdminShellScreenState extends State<AdminShellScreen> {
       ],
       child: Scaffold(
         appBar: AppBar(
-          title: Text(_index == 0 ? 'Guest Gallery' : 'Guest Messages'),
+          title: Text(_titles[_index]),
           actions: [
             IconButton(
               tooltip: 'Sign out',
@@ -74,6 +77,7 @@ class _AdminShellScreenState extends State<AdminShellScreen> {
           children: const [
             ModerationView(),
             MessagesView(),
+            ContentSectionsScreen(),
           ],
         ),
         bottomNavigationBar: NavigationBar(
@@ -91,6 +95,11 @@ class _AdminShellScreenState extends State<AdminShellScreen> {
               icon: Icon(Icons.forum_outlined),
               selectedIcon: Icon(Icons.forum),
               label: 'Messages',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.edit_note_outlined),
+              selectedIcon: Icon(Icons.edit_note),
+              label: 'Content',
             ),
           ],
         ),

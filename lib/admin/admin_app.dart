@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../core/theme/app_colors.dart';
+import '../data/datasources/firebase/firebase_content_datasource.dart';
 import '../data/datasources/firebase/firebase_guest_message_datasource.dart';
 import '../data/datasources/firebase/firebase_memory_datasource.dart';
 import 'cubit/admin_auth_cubit.dart';
@@ -44,6 +45,12 @@ class AdminApp extends StatelessWidget {
         RepositoryProvider<FirebaseGuestMessageDataSource>(
           create: (_) => FirebaseGuestMessageDataSource(
             firestore: FirebaseFirestore.instance,
+          ),
+        ),
+        RepositoryProvider<FirebaseContentDataSource>(
+          create: (_) => FirebaseContentDataSource(
+            firestore: FirebaseFirestore.instance,
+            storage: FirebaseStorage.instance,
           ),
         ),
       ],

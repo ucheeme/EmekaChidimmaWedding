@@ -5,6 +5,7 @@ import '../core/di/injection.dart';
 import '../core/firebase/firebase_bootstrap.dart';
 import 'cubit/auth/auth_cubit.dart';
 import 'cubit/connectivity/connectivity_cubit.dart';
+import 'cubit/content/content_cubit.dart';
 import 'cubit/memories/memories_cubit.dart';
 
 /// Root BLoC providers for Forever Moments.
@@ -31,6 +32,9 @@ class AppBlocProviders extends StatelessWidget {
           ),
         BlocProvider<MemoriesCubit>(
           create: (_) => sl<MemoriesCubit>()..startWatching(),
+        ),
+        BlocProvider<ContentCubit>(
+          create: (_) => sl<ContentCubit>()..load(),
         ),
       ],
       child: child,

@@ -1,12 +1,14 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/constants/route_paths.dart';
 import '../../../core/content/wedding_content.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../cubit/content/content_cubit.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/nav_buttons.dart';
 import '../../widgets/premium_button.dart';
@@ -31,7 +33,7 @@ class _LoveNotesScreenState extends State<LoveNotesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final notes = WeddingContent.loveNotes;
+    final notes = context.watch<ContentCubit>().state.bundle.loveNotes;
 
     return Scaffold(
       extendBodyBehindAppBar: true,

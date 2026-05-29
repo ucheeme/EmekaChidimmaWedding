@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../../core/content/wedding_content.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../cubit/content/content_cubit.dart';
 import '../../widgets/app_image.dart';
 import '../../widgets/nav_buttons.dart';
 import '../../widgets/romantic_background.dart';
@@ -16,7 +18,7 @@ class ProgramScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pages = WeddingContent.programPages;
+    final pages = context.watch<ContentCubit>().state.bundle.program;
 
     return Scaffold(
       extendBodyBehindAppBar: true,

@@ -4,6 +4,8 @@ import '../constants/app_assets.dart';
 ///
 /// Image paths point at bundled assets (see [AppAssets]); remote URLs are also
 /// supported transparently by the presentation layer's `AppImage` widget.
+String _str(Map<String, dynamic> map, String key) => (map[key] ?? '').toString();
+
 class LoveStoryChapter {
   const LoveStoryChapter({
     required this.title,
@@ -16,6 +18,20 @@ class LoveStoryChapter {
   final String date;
   final String body;
   final String imageUrl;
+
+  factory LoveStoryChapter.fromMap(Map<String, dynamic> map) => LoveStoryChapter(
+        title: _str(map, 'title'),
+        date: _str(map, 'date'),
+        body: _str(map, 'body'),
+        imageUrl: _str(map, 'image'),
+      );
+
+  Map<String, dynamic> toMap() => {
+        'title': title,
+        'date': date,
+        'body': body,
+        'image': imageUrl,
+      };
 }
 
 class GalleryPhoto {
@@ -30,6 +46,20 @@ class GalleryPhoto {
   final String caption;
   final String date;
   final String message;
+
+  factory GalleryPhoto.fromMap(Map<String, dynamic> map) => GalleryPhoto(
+        imageUrl: _str(map, 'image'),
+        caption: _str(map, 'caption'),
+        date: _str(map, 'date'),
+        message: _str(map, 'message'),
+      );
+
+  Map<String, dynamic> toMap() => {
+        'image': imageUrl,
+        'caption': caption,
+        'date': date,
+        'message': message,
+      };
 }
 
 class WeddingVideo {
@@ -39,9 +69,25 @@ class WeddingVideo {
     required this.subtitle,
   });
 
+  /// Bundled asset path or a remote (Storage) URL — see [isRemote].
   final String asset;
   final String title;
   final String subtitle;
+
+  bool get isRemote =>
+      asset.startsWith('http://') || asset.startsWith('https://');
+
+  factory WeddingVideo.fromMap(Map<String, dynamic> map) => WeddingVideo(
+        asset: _str(map, 'video'),
+        title: _str(map, 'title'),
+        subtitle: _str(map, 'subtitle'),
+      );
+
+  Map<String, dynamic> toMap() => {
+        'video': asset,
+        'title': title,
+        'subtitle': subtitle,
+      };
 }
 
 class LoveNote {
@@ -49,6 +95,19 @@ class LoveNote {
 
   final String text;
   final String? author;
+
+  factory LoveNote.fromMap(Map<String, dynamic> map) {
+    final author = (map['author'] ?? '').toString().trim();
+    return LoveNote(
+      text: _str(map, 'text'),
+      author: author.isEmpty ? null : author,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+        'text': text,
+        if (author != null && author!.isNotEmpty) 'author': author,
+      };
 }
 
 /// A printed program page (order of service / order of program) shown as a
@@ -63,6 +122,18 @@ class ProgramPage {
   final String image;
   final String title;
   final String subtitle;
+
+  factory ProgramPage.fromMap(Map<String, dynamic> map) => ProgramPage(
+        image: _str(map, 'image'),
+        title: _str(map, 'title'),
+        subtitle: _str(map, 'subtitle'),
+      );
+
+  Map<String, dynamic> toMap() => {
+        'image': image,
+        'title': title,
+        'subtitle': subtitle,
+      };
 }
 
 abstract final class WeddingContent {
@@ -251,4 +322,47 @@ abstract final class WeddingContent {
       author: 'With all my love',
     ),
   ];
+}
+
+/// All curated guest-facing content, sourced from Firestore when available and
+/// falling back to the bundled [WeddingContent] defaults. Held by the guest
+/// app's content cubit and edited by the admin app.
+class WeddingContentBundle {
+  const WeddingContentBundle({
+    required this.loveStory,
+    required this.gallery,
+    required this.videos,
+    required this.loveNotes,
+    required this.program,
+  });
+
+  final List<LoveStoryChapter> loveStory;
+  final List<GalleryPhoto> gallery;
+  final List<WeddingVideo> videos;
+  final List<LoveNote> loveNotes;
+  final List<ProgramPage> program;
+
+  static const WeddingContentBundle defaults = WeddingContentBundle(
+    loveStory: WeddingContent.loveStoryChapters,
+    gallery: WeddingContent.preWeddingPhotos,
+    videos: WeddingContent.weddingVideos,
+    loveNotes: WeddingContent.loveNotes,
+    program: WeddingContent.programPages,
+  );
+
+  WeddingContentBundle copyWith({
+    List<LoveStoryChapter>? loveStory,
+    List<GalleryPhoto>? gallery,
+    List<WeddingVideo>? videos,
+    List<LoveNote>? loveNotes,
+    List<ProgramPage>? program,
+  }) {
+    return WeddingContentBundle(
+      loveStory: loveStory ?? this.loveStory,
+      gallery: gallery ?? this.gallery,
+      videos: videos ?? this.videos,
+      loveNotes: loveNotes ?? this.loveNotes,
+      program: program ?? this.program,
+    );
+  }
 }

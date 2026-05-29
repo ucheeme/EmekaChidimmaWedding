@@ -7,6 +7,7 @@ import '../../core/services/connectivity_service.dart';
 import '../../core/services/media_capture_service.dart';
 import '../../core/services/qr_entry_service.dart';
 import '../../data/datasources/firebase/firebase_auth_datasource.dart';
+import '../../data/datasources/firebase/firebase_content_datasource.dart';
 import '../../data/datasources/firebase/firebase_guest_message_datasource.dart';
 import '../../data/datasources/firebase/firebase_memory_datasource.dart';
 import '../../data/repositories/auth_repository_impl.dart';
@@ -22,6 +23,7 @@ import '../../domain/usecases/watch_memories.dart';
 import '../../presentation/cubit/auth/auth_cubit.dart';
 import '../../presentation/cubit/capture/capture_cubit.dart';
 import '../../presentation/cubit/connectivity/connectivity_cubit.dart';
+import '../../presentation/cubit/content/content_cubit.dart';
 import '../../presentation/cubit/guest_message/guest_message_cubit.dart';
 import '../../presentation/cubit/memories/memories_cubit.dart';
 import '../../presentation/cubit/upload/upload_memory_cubit.dart';
@@ -60,6 +62,9 @@ Future<void> configureDependencies({required bool firebaseReady}) async {
       )
       ..registerLazySingleton<FirebaseGuestMessageDataSource>(
         () => FirebaseGuestMessageDataSource(firestore: sl()),
+      )
+      ..registerLazySingleton<FirebaseContentDataSource>(
+        () => FirebaseContentDataSource(firestore: sl(), storage: sl()),
       )
       ..registerLazySingleton<AuthRepository>(
         () => AuthRepositoryImpl(sl()),
@@ -114,6 +119,12 @@ Future<void> configureDependencies({required bool firebaseReady}) async {
   sl.registerLazySingleton<MemoriesCubit>(
     () => MemoriesCubit(
       watchMemories: firebaseReady ? sl<WatchMemories>() : null,
+    ),
+  );
+
+  sl.registerLazySingleton<ContentCubit>(
+    () => ContentCubit(
+      dataSource: firebaseReady ? sl<FirebaseContentDataSource>() : null,
     ),
   );
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +8,7 @@ import 'package:photo_view/photo_view.dart';
 import '../../../core/constants/route_paths.dart';
 import '../../../core/content/wedding_content.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../cubit/content/content_cubit.dart';
 import '../../widgets/app_image.dart';
 import '../../widgets/nav_buttons.dart';
 import '../../widgets/premium_button.dart';
@@ -32,7 +34,9 @@ class _PreWeddingGalleryScreenState extends State<PreWeddingGalleryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final photos = WeddingContent.preWeddingPhotos;
+    final bundle = context.watch<ContentCubit>().state.bundle;
+    final photos = bundle.gallery;
+    final videos = bundle.videos;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -111,7 +115,7 @@ class _PreWeddingGalleryScreenState extends State<PreWeddingGalleryScreen> {
                   },
                 ),
               ),
-              if (WeddingContent.weddingVideos.isNotEmpty) ...[
+              if (videos.isNotEmpty) ...[
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 28, 16, 8),
                   sliver: SliverToBoxAdapter(
@@ -132,10 +136,10 @@ class _PreWeddingGalleryScreenState extends State<PreWeddingGalleryScreen> {
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: WeddingContent.weddingVideos.length,
+                      itemCount: videos.length,
                       separatorBuilder: (_, __) => const SizedBox(width: 14),
                       itemBuilder: (context, index) {
-                        final video = WeddingContent.weddingVideos[index];
+                        final video = videos[index];
                         return VideoShowcaseCard(video: video)
                             .animate()
                             .fadeIn(delay: (index * 100).ms)

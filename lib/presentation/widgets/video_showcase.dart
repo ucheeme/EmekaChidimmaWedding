@@ -5,6 +5,13 @@ import 'package:video_player/video_player.dart';
 import '../../core/content/wedding_content.dart';
 import '../../core/theme/app_colors.dart';
 
+/// Builds a controller for either a bundled asset or a remote (Storage) URL.
+VideoPlayerController _createController(WeddingVideo video) {
+  return video.isRemote
+      ? VideoPlayerController.networkUrl(Uri.parse(video.asset))
+      : VideoPlayerController.asset(video.asset);
+}
+
 /// A tappable preview card for a bundled wedding clip.
 ///
 /// Shows the first frame (muted, paused) as a poster and opens a fullscreen
@@ -26,7 +33,7 @@ class _VideoShowcaseCardState extends State<VideoShowcaseCard> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset(widget.video.asset);
+    _controller = _createController(widget.video);
     _controller
         .initialize()
         .then((_) {
@@ -162,7 +169,7 @@ class _FullscreenVideoState extends State<_FullscreenVideo> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset(widget.video.asset);
+    _controller = _createController(widget.video);
     _controller
         .initialize()
         .then((_) {
