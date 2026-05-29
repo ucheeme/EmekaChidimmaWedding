@@ -30,6 +30,7 @@ class FirebaseMemoryDataSource {
     final id = weddingId ?? WeddingConfig.weddingId;
     return _memoriesCollection
         .where(MemoryFields.weddingId, isEqualTo: id)
+        .where(MemoryFields.visible, isEqualTo: true)
         .orderBy(MemoryFields.timestamp, descending: true)
         .snapshots()
         .map(
@@ -37,6 +38,44 @@ class FirebaseMemoryDataSource {
               .map(MemoryModel.fromFirestore)
               .toList(growable: false),
         );
+  }
+
+  /// Admin-only: streams every memory (including hidden ones) for moderation.
+  Stream<List<MemoryModel>> watchAllMemories({String? weddingId}) {
+    final id = weddingId ?? WeddingConfig.weddingId;
+    return _memoriesCollection
+        .where(MemoryFields.weddingId, isEqualTo: id)
+        .orderBy(MemoryFields.timestamp, descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map(MemoryModel.fromFirestore)
+              .toList(growable: false),
+        );
+  }
+
+  /// Admin-only: show or hide a memory in the guest gallery.
+  Future<void> setMemoryVisibility({
+    required String memoryId,
+    required bool visible,
+  }) async {
+    try {
+      await _memoriesCollection
+          .doc(memoryId)
+          .update({MemoryFields.visible: visible});
+    } on FirebaseException catch (e) {
+      throw ServerException(e.message ?? 'Could not update memory.', e.code);
+    }
+  }
+
+  /// Admin-only: permanently delete a memory. A Cloud Function removes the
+  /// associated Storage file when the document is deleted.
+  Future<void> deleteMemory(String memoryId) async {
+    try {
+      await _memoriesCollection.doc(memoryId).delete();
+    } on FirebaseException catch (e) {
+      throw ServerException(e.message ?? 'Could not delete memory.', e.code);
+    }
   }
 
   Future<List<MemoryModel>> getMemories({String? weddingId}) async {

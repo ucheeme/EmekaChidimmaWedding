@@ -7,6 +7,10 @@ class FirebaseCollections {
   static const String memories = 'memories';
   static const String guestMessages = 'guest_messages';
   static const String weddingContent = 'wedding_content';
+
+  /// Allow-list of admin user UIDs. A document id == auth uid grants moderation
+  /// rights (checked in Firestore security rules).
+  static const String admins = 'admins';
 }
 
 /// Cloud Storage path helpers.
@@ -34,6 +38,10 @@ class MemoryFields {
   static const String weddingId = 'weddingId';
   static const String storagePath = 'storagePath';
   static const String driveSyncStatus = 'driveSyncStatus';
+
+  /// Moderation flag. When false, the memory is hidden from the guest gallery
+  /// (set by an admin). Absent/true means visible.
+  static const String visible = 'visible';
 }
 
 /// Firestore field keys for [FirebaseCollections.guestMessages].

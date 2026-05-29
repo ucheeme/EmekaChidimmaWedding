@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <application
-        android:label="forever_moments"
+        android:label="FM Admin"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

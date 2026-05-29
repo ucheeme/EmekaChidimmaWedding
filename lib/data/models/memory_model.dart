@@ -16,6 +16,7 @@ class MemoryModel {
     this.tableNumber,
     this.storagePath,
     this.driveSyncStatus,
+    this.visible = true,
   });
 
   final String id;
@@ -28,6 +29,7 @@ class MemoryModel {
   final String? tableNumber;
   final String? storagePath;
   final String? driveSyncStatus;
+  final bool visible;
 
   factory MemoryModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data() ?? {};
@@ -45,6 +47,8 @@ class MemoryModel {
       tableNumber: data[MemoryFields.tableNumber] as String?,
       storagePath: data[MemoryFields.storagePath] as String?,
       driveSyncStatus: data[MemoryFields.driveSyncStatus] as String?,
+      // Legacy uploads without the flag are treated as visible.
+      visible: data[MemoryFields.visible] as bool? ?? true,
     );
   }
 
@@ -54,6 +58,7 @@ class MemoryModel {
       MemoryFields.timestamp: FieldValue.serverTimestamp(),
       MemoryFields.mediaType: mediaType,
       MemoryFields.weddingId: weddingId,
+      MemoryFields.visible: visible,
       if (guestName != null) MemoryFields.guestName: guestName,
       if (message != null) MemoryFields.message: message,
       if (tableNumber != null) MemoryFields.tableNumber: tableNumber,
@@ -73,6 +78,7 @@ class MemoryModel {
       tableNumber: tableNumber,
       storagePath: storagePath,
       driveSyncStatus: driveSyncStatus,
+      visible: visible,
     );
   }
 }

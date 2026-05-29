@@ -18,6 +18,22 @@ class GuestMessageModel {
   final String weddingId;
   final String? guestName;
 
+  factory GuestMessageModel.fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) {
+    final data = doc.data() ?? {};
+    final timestamp = data[GuestMessageFields.timestamp];
+    return GuestMessageModel(
+      id: doc.id,
+      text: data[GuestMessageFields.text] as String? ?? '',
+      timestamp: timestamp is Timestamp
+          ? timestamp.toDate()
+          : DateTime.fromMillisecondsSinceEpoch(0),
+      weddingId: data[GuestMessageFields.weddingId] as String? ?? '',
+      guestName: data[GuestMessageFields.guestName] as String?,
+    );
+  }
+
   Map<String, dynamic> toFirestore() {
     return {
       GuestMessageFields.text: text,

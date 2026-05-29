@@ -20,3 +20,7 @@ class AuthException extends AppException {
 class StorageException extends AppException {
   const StorageException([super.message = 'Storage error', super.code]);
 }
+
+class ServerException extends AppException {
+  const ServerException([super.message = 'Server error', super.code]);
+}

@@ -15,6 +15,7 @@ class Memory extends Equatable {
     this.tableNumber,
     this.storagePath,
     this.driveSyncStatus,
+    this.visible = true,
   });
 
   final String id;
@@ -27,6 +28,10 @@ class Memory extends Equatable {
   final String? tableNumber;
   final String? storagePath;
   final String? driveSyncStatus;
+
+  /// Whether this memory is shown in the guest gallery. Admins can hide
+  /// inappropriate uploads without deleting them.
+  final bool visible;
 
   bool get isVideo => mediaType == MediaType.video;
 
@@ -42,5 +47,6 @@ class Memory extends Equatable {
         tableNumber,
         storagePath,
         driveSyncStatus,
+        visible,
       ];
 }

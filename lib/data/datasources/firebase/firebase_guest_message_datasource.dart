@@ -40,4 +40,28 @@ class FirebaseGuestMessageDataSource {
       throw StorageException(e.message ?? 'Could not send message.', e.code);
     }
   }
+
+  /// Admin-only: streams guest messages newest-first for review.
+  Stream<List<GuestMessageModel>> watchMessages({
+    String weddingId = WeddingConfig.weddingId,
+  }) {
+    return _collection
+        .where(GuestMessageFields.weddingId, isEqualTo: weddingId)
+        .orderBy(GuestMessageFields.timestamp, descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map(GuestMessageModel.fromFirestore)
+              .toList(growable: false),
+        );
+  }
+
+  /// Admin-only: remove a guest message.
+  Future<void> deleteMessage(String messageId) async {
+    try {
+      await _collection.doc(messageId).delete();
+    } on FirebaseException catch (e) {
+      throw ServerException(e.message ?? 'Could not delete message.', e.code);
+    }
+  }
 }

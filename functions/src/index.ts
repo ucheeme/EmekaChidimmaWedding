@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { onDocumentCreated } from "firebase-functions/v2/firestore";
+import { onDocumentCreated, onDocumentDeleted } from "firebase-functions/v2/firestore";
 import { defineSecret } from "firebase-functions/params";
 import { createDriveClient, uploadBufferToDrive } from "./drive/googleDriveClient";
 
@@ -78,6 +78,31 @@ export const syncMemoryToGoogleDrive = onDocumentCreated(
         driveSyncStatus: "failed",
         driveSyncError: error instanceof Error ? error.message : "Unknown error",
       });
+    }
+  },
+);
+
+/**
+ * When an admin deletes a memory document, remove the backing media file from
+ * Firebase Storage so hidden/removed uploads don't linger. Runs with the Admin
+ * SDK, so no client Storage permissions are required.
+ */
+export const cleanupMemoryStorage = onDocumentDeleted(
+  {
+    document: "memories/{memoryId}",
+    region: "us-central1",
+  },
+  async (event) => {
+    const data = event.data?.data() as MemoryDocument | undefined;
+    const storagePath = data?.storagePath;
+    if (!storagePath) {
+      return;
+    }
+    try {
+      await admin.storage().bucket().file(storagePath).delete();
+      console.log(`Deleted Storage object ${storagePath}.`);
+    } catch (error) {
+      console.error(`Failed to delete Storage object ${storagePath}:`, error);
     }
   },
 );
