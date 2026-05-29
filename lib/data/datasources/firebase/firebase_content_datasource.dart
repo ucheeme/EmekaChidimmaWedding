@@ -65,6 +65,73 @@ class FirebaseContentDataSource {
     return _readItems(section);
   }
 
+  /// Background-music track URL, or null/empty when none is configured.
+  Future<String?> fetchMusicUrl() async {
+    try {
+      final snap = await _sectionDoc(ContentSections.music).get();
+      final url = (snap.data()?[ContentSections.urlField] ?? '').toString();
+      return url.isEmpty ? null : url;
+    } on FirebaseException {
+      return null;
+    }
+  }
+
+  /// Admin-only: sets (or clears, with an empty string) the music track URL.
+  Future<void> saveMusicUrl(String url) async {
+    try {
+      await _sectionDoc(ContentSections.music).set({
+        ContentSections.urlField: url,
+        ContentSections.updatedAtField: FieldValue.serverTimestamp(),
+      });
+    } on FirebaseException catch (e) {
+      throw ServerException(e.message ?? 'Could not save music.', e.code);
+    }
+  }
+
+  /// Admin-only: uploads an audio file and returns its download URL.
+  Future<String> uploadAudio({
+    required XFile file,
+    String? fileName,
+  }) async {
+    try {
+      final id = _uuid.v4();
+      final extension = _audioExtension(fileName ?? file.name);
+      final path = FirebaseStoragePaths.contentMedia(
+        section: ContentSections.music,
+        id: id,
+        extension: extension,
+      );
+      final bytes = await file.readAsBytes();
+      final ref = _storage.ref(path);
+      await ref.putData(
+        bytes,
+        SettableMetadata(contentType: _audioContentType(extension)),
+      );
+      return ref.getDownloadURL();
+    } on FirebaseException catch (e) {
+      throw StorageException(e.message ?? 'Upload failed.', e.code);
+    }
+  }
+
+  String _audioExtension(String name) {
+    final lower = name.toLowerCase();
+    if (lower.endsWith('.m4a')) return 'm4a';
+    if (lower.endsWith('.aac')) return 'aac';
+    if (lower.endsWith('.wav')) return 'wav';
+    if (lower.endsWith('.ogg')) return 'ogg';
+    return 'mp3';
+  }
+
+  String _audioContentType(String extension) {
+    return switch (extension) {
+      'm4a' => 'audio/mp4',
+      'aac' => 'audio/aac',
+      'wav' => 'audio/wav',
+      'ogg' => 'audio/ogg',
+      _ => 'audio/mpeg',
+    };
+  }
+
   /// Admin-only: persists the ordered items for a section.
   Future<void> saveSection(
     String section,

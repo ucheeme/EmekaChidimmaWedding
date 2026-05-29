@@ -24,9 +24,13 @@ class ContentSections {
   static const String loveNotes = 'love_notes';
   static const String program = 'program';
 
+  /// Single background-music track document (holds [urlField], not [itemsField]).
+  static const String music = 'music';
+
   /// Array field holding the ordered items within a section document.
   static const String itemsField = 'items';
   static const String updatedAtField = 'updatedAt';
+  static const String urlField = 'url';
 }
 
 /// Cloud Storage path helpers.

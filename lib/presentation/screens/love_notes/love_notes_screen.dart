@@ -40,7 +40,7 @@ class _LoveNotesScreenState extends State<LoveNotesScreen> {
       appBar: AppBar(
         leading: const AppBackButton(),
         title: const Text('Love Notes'),
-        actions: const [HomeIconButton()],
+        actions: const [MusicToggleButton(), HomeIconButton()],
       ),
       body: RomanticBackground(
         showPetals: true,

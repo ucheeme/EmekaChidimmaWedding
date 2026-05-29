@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../core/audio/music_service.dart';
 import '../../core/services/connectivity_service.dart';
 import '../../core/services/media_capture_service.dart';
 import '../../core/services/qr_entry_service.dart';
@@ -26,6 +27,7 @@ import '../../presentation/cubit/connectivity/connectivity_cubit.dart';
 import '../../presentation/cubit/content/content_cubit.dart';
 import '../../presentation/cubit/guest_message/guest_message_cubit.dart';
 import '../../presentation/cubit/memories/memories_cubit.dart';
+import '../../presentation/cubit/music/music_cubit.dart';
 import '../../presentation/cubit/upload/upload_memory_cubit.dart';
 
 final GetIt sl = GetIt.instance;
@@ -124,6 +126,14 @@ Future<void> configureDependencies({required bool firebaseReady}) async {
 
   sl.registerLazySingleton<ContentCubit>(
     () => ContentCubit(
+      dataSource: firebaseReady ? sl<FirebaseContentDataSource>() : null,
+    ),
+  );
+
+  sl.registerLazySingleton<MusicService>(() => MusicService());
+  sl.registerLazySingleton<MusicCubit>(
+    () => MusicCubit(
+      service: sl<MusicService>(),
       dataSource: firebaseReady ? sl<FirebaseContentDataSource>() : null,
     ),
   );

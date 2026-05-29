@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -7,6 +8,7 @@ import '../../../core/config/wedding_config.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/constants/route_paths.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../cubit/music/music_cubit.dart';
 import '../../widgets/premium_button.dart';
 import '../../widgets/romantic_background.dart';
 
@@ -70,14 +72,20 @@ class IntroScreen extends StatelessWidget {
                 PremiumButton(
                   label: 'Begin Our Story',
                   icon: Icons.auto_stories_outlined,
-                  onPressed: () => context.push(RoutePaths.loveStory),
+                  onPressed: () {
+                    context.read<MusicCubit>().userStart();
+                    context.push(RoutePaths.loveStory);
+                  },
                 ),
                 const SizedBox(height: 16),
                 PremiumButton(
                   label: 'Skip to Capture Moments',
                   icon: Icons.camera_alt_outlined,
                   outlined: true,
-                  onPressed: () => context.go(RoutePaths.home),
+                  onPressed: () {
+                    context.read<MusicCubit>().userStart();
+                    context.go(RoutePaths.home);
+                  },
                 ),
                 const SizedBox(height: 32),
               ],

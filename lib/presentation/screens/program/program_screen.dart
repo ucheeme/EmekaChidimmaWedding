@@ -26,7 +26,7 @@ class ProgramScreen extends StatelessWidget {
         leading: const AppBackButton(),
         title: const Text('Wedding Program'),
         backgroundColor: Colors.transparent,
-        actions: const [HomeIconButton()],
+        actions: const [MusicToggleButton(), HomeIconButton()],
       ),
       body: RomanticBackground(
         child: SafeArea(

@@ -10,6 +10,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../widgets/add_to_home_screen_banner.dart';
 import '../../widgets/app_image.dart';
 import '../../widgets/glass_card.dart';
+import '../../widgets/nav_buttons.dart';
 import '../../widgets/romantic_background.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -22,6 +23,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Forever Moments'),
         actions: [
+          const MusicToggleButton(),
           IconButton(
             icon: const Icon(Icons.tv_outlined),
             tooltip: 'Wedding Wall',
