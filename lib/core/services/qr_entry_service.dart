@@ -5,19 +5,41 @@ import '../config/web_config.dart';
 import '../utils/app_logger.dart';
 
 /// Persists whether the guest opened the app via the wedding QR code (web/PWA).
+///
+/// Storage is treated as best-effort: if `shared_preferences` is unavailable
+/// (e.g. Safari private mode, or the web plugin failing to register), the
+/// service falls back to an in-memory session flag so QR entry still works and
+/// the app never crashes on startup.
 class QrEntryService {
-  QrEntryService({SharedPreferences? preferences})
-      : _preferencesFuture = preferences != null
-            ? Future.value(preferences)
-            : SharedPreferences.getInstance();
+  QrEntryService({SharedPreferences? preferences}) : _injected = preferences;
 
   static const _storageKey = 'forever_moments_qr_entry_granted';
 
-  final Future<SharedPreferences> _preferencesFuture;
+  final SharedPreferences? _injected;
+  Future<SharedPreferences?>? _preferencesFuture;
 
   /// In-memory flag for the current browser tab/session.
-  /// Safari/private mode can block localStorage; this still allows QR entry.
   bool _sessionGranted = false;
+
+  /// Resolves shared preferences, returning null on any failure instead of
+  /// throwing. The future is cached and carries its own error handler so a
+  /// rejected plugin call can never surface as an unhandled zone error.
+  Future<SharedPreferences?> _prefs() {
+    if (_injected != null) {
+      return Future<SharedPreferences?>.value(_injected);
+    }
+    return _preferencesFuture ??= SharedPreferences.getInstance()
+        .then<SharedPreferences?>((prefs) => prefs)
+        .catchError((Object error, StackTrace stack) {
+      AppLogger.error(
+        'Shared preferences unavailable; using in-memory QR entry',
+        tag: 'QrEntry',
+        error: error,
+        stackTrace: stack,
+      );
+      return null;
+    });
+  }
 
   /// Returns true if the guest may use the app (QR entry or dev bypass).
   Future<bool> hasValidEntry() async {
@@ -27,22 +49,15 @@ class QrEntryService {
     if (_sessionGranted) {
       return true;
     }
-    try {
-      final prefs = await _preferencesFuture;
-      final persisted = prefs.getBool(_storageKey) ?? false;
-      if (persisted) {
-        _sessionGranted = true;
-      }
-      return persisted;
-    } catch (e, stack) {
-      AppLogger.error(
-        'Unable to read QR entry state',
-        tag: 'QrEntry',
-        error: e,
-        stackTrace: stack,
-      );
+    final prefs = await _prefs();
+    if (prefs == null) {
       return _sessionGranted;
     }
+    final persisted = prefs.getBool(_storageKey) ?? false;
+    if (persisted) {
+      _sessionGranted = true;
+    }
+    return persisted;
   }
 
   /// True when launch URL is a valid guest entry link.
@@ -59,28 +74,21 @@ class QrEntryService {
   Future<void> grantEntryFromQr() async {
     _sessionGranted = true;
     if (!kIsWeb) return;
-    try {
-      final prefs = await _preferencesFuture;
-      await prefs.setBool(_storageKey, true);
+    final prefs = await _prefs();
+    if (prefs == null) {
+      // Session flag already set; persistence is best-effort.
+      return;
+    }
+    final ok = await prefs.setBool(_storageKey, true);
+    if (ok) {
       AppLogger.info('QR entry granted', tag: 'QrEntry');
-    } catch (e, stack) {
-      AppLogger.error(
-        'Unable to persist QR entry state (session entry still active)',
-        tag: 'QrEntry',
-        error: e,
-        stackTrace: stack,
-      );
     }
   }
 
   /// For testing only.
   Future<void> clearEntry() async {
     _sessionGranted = false;
-    try {
-      final prefs = await _preferencesFuture;
-      await prefs.remove(_storageKey);
-    } catch (_) {
-      // no-op for non-critical test helper
-    }
+    final prefs = await _prefs();
+    await prefs?.remove(_storageKey);
   }
 }
