@@ -5,6 +5,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/app_bloc_providers.dart';
 import 'presentation/widgets/app_shell.dart';
+import 'presentation/widgets/memories_bootstrap.dart';
 
 class ForeverMomentsApp extends StatelessWidget {
   const ForeverMomentsApp({super.key, required this.firebase});
@@ -22,8 +23,11 @@ class ForeverMomentsApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
         routerConfig: router,
-        builder: (context, child) => AppShell(
-          child: child ?? const SizedBox.shrink(),
+        builder: (context, child) => MemoriesBootstrap(
+          firebaseReady: firebase.initialized,
+          child: AppShell(
+            child: child ?? const SizedBox.shrink(),
+          ),
         ),
       ),
     );

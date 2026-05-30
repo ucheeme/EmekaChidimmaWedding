@@ -7,6 +7,7 @@ import '../../../core/config/wedding_config.dart';
 import '../../../core/constants/firebase_constants.dart';
 import '../../../core/errors/exceptions.dart';
 import '../../../core/media/image_compress_helper.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../domain/enums/media_type.dart';
 import '../../models/memory_model.dart';
 
@@ -38,17 +39,34 @@ class FirebaseMemoryDataSource {
         .where(MemoryFields.weddingId, isEqualTo: id)
         .orderBy(MemoryFields.timestamp, descending: true)
         .limit(liveGalleryLimit)
-        .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
-              .map(MemoryModel.fromFirestore)
-              // Filter hidden items in-app so legacy uploads without a
-              // `visible` field (treated as true by [fromFirestore]) still
-              // appear. A Firestore `visible == true` query excludes docs
-              // where the field was never written.
-              .where((m) => m.visible)
-              .toList(growable: false),
+        .snapshots(includeMetadataChanges: true)
+        // Offline cache often emits an empty snapshot before the server responds.
+        // Treating that as "no memories" leaves the gallery blank even when uploads
+        // exist. Skip empty cache-only snapshots and wait for server data.
+        .where(
+          (snap) => snap.docs.isNotEmpty || !snap.metadata.isFromCache,
+        )
+        .map(_parseVisibleMemories);
+  }
+
+  List<MemoryModel> _parseVisibleMemories(
+    QuerySnapshot<Map<String, dynamic>> snapshot,
+  ) {
+    final memories = <MemoryModel>[];
+    for (final doc in snapshot.docs) {
+      try {
+        final model = MemoryModel.fromFirestore(doc);
+        if (model.visible) memories.add(model);
+      } catch (e, stack) {
+        AppLogger.error(
+          'Skipping unreadable memory document',
+          tag: 'MemoryDataSource',
+          error: e,
+          stackTrace: stack,
         );
+      }
+    }
+    return memories;
   }
 
   /// Admin-only: streams every memory (including hidden ones) for moderation.

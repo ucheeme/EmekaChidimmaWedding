@@ -32,7 +32,7 @@ class AppBlocProviders extends StatelessWidget {
             create: (_) => sl<AuthCubit>()..ensureSession(),
           ),
         BlocProvider<MemoriesCubit>(
-          create: (_) => sl<MemoriesCubit>()..startWatching(),
+          create: (_) => sl<MemoriesCubit>(),
         ),
         BlocProvider<ContentCubit>(
           create: (_) => sl<ContentCubit>()..load(),
