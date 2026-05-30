@@ -1,20 +1,18 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../../../core/utils/image_cache_config.dart';
 import '../../../domain/entities/memory.dart';
 import '../../cubit/memories/memories_cubit.dart';
 import '../../cubit/memories/memories_state.dart';
 import '../../widgets/app_image.dart';
+import '../../widgets/fullscreen_network_image.dart';
 import '../../widgets/nav_buttons.dart';
 import '../../widgets/romantic_background.dart';
 
@@ -194,8 +192,8 @@ class _LiveGalleryScreenState extends State<LiveGalleryScreen> {
         key: ValueKey(memory.id),
         fit: StackFit.expand,
         children: [
-          CachedNetworkImage(
-            imageUrl: memory.imageUrl,
+          AppImage(
+            source: memory.imageUrl,
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
@@ -279,17 +277,9 @@ class _LiveGalleryScreenState extends State<LiveGalleryScreen> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                  CachedNetworkImage(
-                    imageUrl: memory.imageUrl,
+                  AppImage(
+                    source: memory.imageUrl,
                     fit: BoxFit.cover,
-                    memCacheWidth: ImageCacheConfig.memCacheWidth(context),
-                    placeholder: (_, __) => Container(
-                      color: AppColors.softPink,
-                      child: const Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    ),
-                    errorWidget: (_, __, ___) => AppImage(source: memory.imageUrl),
                   ),
                     if (memory.isVideo)
                       const Center(
@@ -335,20 +325,8 @@ class _LiveGalleryScreenState extends State<LiveGalleryScreen> {
   }
 
   void _openPreview(Memory memory) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => Scaffold(
-          backgroundColor: Colors.black,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.white,
-          ),
-          body: PhotoView(
-            imageProvider: CachedNetworkImageProvider(memory.imageUrl),
-          ),
-        ),
-      ),
-    );
+    if (memory.isVideo) return; // Videos use inline player elsewhere.
+    FullscreenNetworkImage.open(context, memory.imageUrl);
   }
 }
 

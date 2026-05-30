@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/config/wedding_config.dart';
@@ -130,17 +131,17 @@ class FirebaseMemoryDataSource {
   }) async {
     try {
       final memoryId = _uuid.v4();
-      final extension = _extensionFor(mediaType, mediaFile.name);
+      var bytes = await mediaFile.readAsBytes();
+      if (mediaType == MediaType.photo) {
+        bytes = await ImageCompressHelper.preparePhotoBytes(bytes);
+      }
+
+      final extension = _extensionFor(mediaType, mediaFile.name, bytes);
       final storagePath = FirebaseStoragePaths.memoryFile(
         weddingId: weddingId,
         memoryId: memoryId,
         extension: extension,
       );
-
-      var bytes = await mediaFile.readAsBytes();
-      if (mediaType == MediaType.photo) {
-        bytes = await ImageCompressHelper.preparePhotoBytes(bytes);
-      }
 
       final ref = _storage.ref(storagePath);
       await ref.putData(
@@ -169,13 +170,44 @@ class FirebaseMemoryDataSource {
     }
   }
 
-  String _extensionFor(MediaType mediaType, String fileName) {
+  String _extensionFor(
+    MediaType mediaType,
+    String fileName,
+    Uint8List bytes,
+  ) {
     if (mediaType == MediaType.video) {
       final lower = fileName.toLowerCase();
       if (lower.endsWith('.mov')) return 'mov';
       if (lower.endsWith('.webm')) return 'webm';
       return 'mp4';
     }
+    return _photoExtension(bytes, fileName);
+  }
+
+  /// Detects the real photo format from magic bytes so iPhone HEIC uploads are
+  /// not mislabelled as JPEG (which renders as corrupt in browsers).
+  String _photoExtension(Uint8List bytes, String fileName) {
+    if (bytes.length >= 3 && bytes[0] == 0xFF && bytes[1] == 0xD8) {
+      return 'jpg';
+    }
+    if (bytes.length >= 12) {
+      final header = String.fromCharCodes(bytes.sublist(4, 12));
+      if (header.startsWith('ftyp')) {
+        final brand = String.fromCharCodes(bytes.sublist(8, 12)).toLowerCase();
+        if (brand.contains('heic') || brand.contains('heif')) return 'heic';
+      }
+    }
+    if (bytes.length >= 8 &&
+        bytes[0] == 0x89 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x4E &&
+        bytes[3] == 0x47) {
+      return 'png';
+    }
+    final lower = fileName.toLowerCase();
+    if (lower.endsWith('.heic') || lower.endsWith('.heif')) return 'heic';
+    if (lower.endsWith('.png')) return 'png';
+    if (lower.endsWith('.webp')) return 'webp';
     return 'jpg';
   }
 
@@ -187,6 +219,11 @@ class FirebaseMemoryDataSource {
         _ => 'video/mp4',
       };
     }
-    return 'image/jpeg';
+    return switch (extension) {
+      'heic' => 'image/heic',
+      'png' => 'image/png',
+      'webp' => 'image/webp',
+      _ => 'image/jpeg',
+    };
   }
 }
