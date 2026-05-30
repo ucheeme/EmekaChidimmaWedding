@@ -39,7 +39,7 @@ class _LoveStoryScreenState extends State<LoveStoryScreen> {
       appBar: AppBar(
         leading: const AppBackButton(),
         title: const Text('Our Love Story'),
-        actions: const [MusicToggleButton(), HomeIconButton()],
+        actions: const [AppNavActions()],
       ),
       body: RomanticBackground(
         child: SafeArea(

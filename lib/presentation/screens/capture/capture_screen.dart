@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/constants/route_paths.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../domain/entities/memory_upload.dart';
 import '../../../domain/enums/media_type.dart';
@@ -12,6 +13,7 @@ import '../../cubit/capture/capture_state.dart';
 import '../../cubit/connectivity/connectivity_cubit.dart';
 import '../../cubit/upload/upload_memory_cubit.dart';
 import '../../cubit/upload/upload_memory_state.dart';
+import '../../widgets/nav_buttons.dart';
 import '../../widgets/premium_button.dart';
 import '../../widgets/romantic_background.dart';
 import 'widgets/capture_details_form.dart';
@@ -93,14 +95,20 @@ class _CaptureScreenState extends State<CaptureScreen> {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          leading: BackButton(
-            color: AppColors.deepWine,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+            tooltip: 'Back',
             onPressed: () {
               context.read<CaptureCubit>().reset();
-              context.pop();
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go(RoutePaths.home);
+              }
             },
           ),
           title: const Text('Capture Moment'),
+          actions: const [AppNavActions()],
         ),
         body: RomanticBackground(
           child: SafeArea(

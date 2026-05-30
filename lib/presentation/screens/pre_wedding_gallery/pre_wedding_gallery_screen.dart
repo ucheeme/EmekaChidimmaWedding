@@ -43,7 +43,7 @@ class _PreWeddingGalleryScreenState extends State<PreWeddingGalleryScreen> {
       appBar: AppBar(
         leading: const AppBackButton(),
         title: const Text('Pre-Wedding Gallery'),
-        actions: const [MusicToggleButton(), HomeIconButton()],
+        actions: const [AppNavActions()],
       ),
       body: RomanticBackground(
         child: SafeArea(

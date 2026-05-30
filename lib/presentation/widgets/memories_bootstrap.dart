@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -35,8 +36,10 @@ class _MemoriesBootstrapState extends State<MemoriesBootstrap> {
       context.read<MemoriesCubit>().startWatching();
       return;
     }
-    final authState = context.read<AuthCubit>().state;
-    if (authState.isAuthenticated) {
+    // Bootstrap already signs in anonymously before the UI mounts. Start
+    // immediately when a Firebase user exists — don't wait on AuthCubit UX
+    // state, which can leave the gallery stuck in a blank initial state.
+    if (FirebaseAuth.instance.currentUser != null) {
       context.read<MemoriesCubit>().startWatching();
     }
   }

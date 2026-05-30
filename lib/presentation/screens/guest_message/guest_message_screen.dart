@@ -8,6 +8,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../cubit/guest_message/guest_message_cubit.dart';
 import '../../cubit/guest_message/guest_message_state.dart';
 import '../../widgets/glass_card.dart';
+import '../../widgets/nav_buttons.dart';
 import '../../widgets/premium_button.dart';
 import '../../widgets/romantic_background.dart';
 
@@ -56,8 +57,9 @@ class _GuestMessageScreenState extends State<GuestMessageScreen> {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          leading: const BackButton(),
+          leading: const AppBackButton(),
           title: const Text('Leave a Message'),
+          actions: const [AppNavActions()],
         ),
         body: RomanticBackground(
           showPetals: true,

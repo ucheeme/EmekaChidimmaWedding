@@ -62,10 +62,20 @@ class MusicCubit extends Cubit<MusicState> {
   }
 
   Future<void> toggle() async {
-    if (state.playing) {
-      await _service.pause();
-    } else {
-      await _service.play();
+    if (!state.hasTrack) {
+      await load();
+    }
+    if (!state.hasTrack) return;
+
+    try {
+      if (state.playing) {
+        await _service.pause();
+      } else {
+        await _service.play();
+      }
+    } catch (e, stack) {
+      AppLogger.error('Music toggle failed',
+          tag: 'Music', error: e, stackTrace: stack);
     }
   }
 

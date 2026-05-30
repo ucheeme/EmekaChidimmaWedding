@@ -17,7 +17,8 @@ class MemoriesState extends Equatable {
   final bool isDemoData;
   final String? message;
 
-  bool get isLoading => status == MemoriesStatus.loading;
+  bool get isLoading =>
+      status == MemoriesStatus.loading || status == MemoriesStatus.initial;
   bool get hasMemories => memories.isNotEmpty;
 
   MemoriesState copyWith({

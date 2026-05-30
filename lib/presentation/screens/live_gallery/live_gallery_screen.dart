@@ -14,6 +14,8 @@ import '../../../core/utils/image_cache_config.dart';
 import '../../../domain/entities/memory.dart';
 import '../../cubit/memories/memories_cubit.dart';
 import '../../cubit/memories/memories_state.dart';
+import '../../widgets/app_image.dart';
+import '../../widgets/nav_buttons.dart';
 import '../../widgets/romantic_background.dart';
 
 class LiveGalleryScreen extends StatefulWidget {
@@ -57,7 +59,7 @@ class _LiveGalleryScreenState extends State<LiveGalleryScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        leading: const BackButton(),
+        leading: const AppBackButton(),
         title: const Text('Live Gallery'),
         actions: [
           BlocBuilder<MemoriesCubit, MemoriesState>(
@@ -72,6 +74,7 @@ class _LiveGalleryScreenState extends State<LiveGalleryScreen> {
               );
             },
           ),
+          const AppNavActions(),
         ],
       ),
       body: RomanticBackground(
@@ -280,6 +283,13 @@ class _LiveGalleryScreenState extends State<LiveGalleryScreen> {
                     imageUrl: memory.imageUrl,
                     fit: BoxFit.cover,
                     memCacheWidth: ImageCacheConfig.memCacheWidth(context),
+                    placeholder: (_, __) => Container(
+                      color: AppColors.softPink,
+                      child: const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                    errorWidget: (_, __, ___) => AppImage(source: memory.imageUrl),
                   ),
                     if (memory.isVideo)
                       const Center(

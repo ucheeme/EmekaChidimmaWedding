@@ -42,6 +42,39 @@ class HomeIconButton extends StatelessWidget {
   }
 }
 
+/// Returns to the cinematic intro / welcome screen.
+class IntroIconButton extends StatelessWidget {
+  const IntroIconButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.restart_alt_rounded),
+      tooltip: 'Back to start',
+      onPressed: () => context.go(RoutePaths.intro),
+    );
+  }
+}
+
+/// Standard app-bar actions: optional music toggle, restart intro, home hub.
+class AppNavActions extends StatelessWidget {
+  const AppNavActions({super.key, this.showMusic = true});
+
+  final bool showMusic;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (showMusic) const MusicToggleButton(),
+        const IntroIconButton(),
+        const HomeIconButton(),
+      ],
+    );
+  }
+}
+
 /// Play/pause toggle for the background music. Renders nothing when no track is
 /// configured, so screens without music stay visually unchanged.
 class MusicToggleButton extends StatelessWidget {

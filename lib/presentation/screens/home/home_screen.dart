@@ -23,7 +23,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Forever Moments'),
         actions: [
-          const MusicToggleButton(),
+          const AppNavActions(),
           IconButton(
             icon: const Icon(Icons.tv_outlined),
             tooltip: 'Wedding Wall',
